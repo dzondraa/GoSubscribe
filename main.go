@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 )
@@ -31,19 +32,9 @@ type Subscriber struct {
 
 func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
 	i := 0
-	price := "100.00"
 	for {
-		if i%2 == 0 {
-			price = "100.00"
-		}
-		if i%3 == 0 {
-			price = "102.00"
-		}
-		if i%7 == 0 {
-			price = "98.00"
-		}
-
-		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: price}
+		rand := strconv.Itoa(rand.Intn(105-95) + 95)
+		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: rand + ".00"}
 		time.Sleep(4 * time.Second)
 		i++
 	}
