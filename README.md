@@ -4,8 +4,8 @@ Consuming streaming data from multiple sources
 ## Idea:
 - Creating buffers for streaming (creating channel and go routine for each exchange)
 ```
-  var source [SOURCE_CAPACITY]Subscriber
-	var results [SOURCE_CAPACITY]chan TickerPrice
+var source [SOURCE_CAPACITY]Subscriber
+var results [SOURCE_CAPACITY]chan TickerPrice
 ```
 - Exchanges can update the price any time (example 4s)
 
