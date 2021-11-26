@@ -13,7 +13,7 @@ type Ticker string
 
 const (
 	BTCUSDTicker    Ticker = "BTC_USD"
-	SOURCE_CAPACITY        = 10
+	SOURCE_CAPACITY        = 100
 )
 
 type TickerPrice struct {
@@ -33,6 +33,7 @@ type Subscriber struct {
 func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
 	i := 0
 	for {
+		// genereting random value at this point of time [95-105 USD] -> testing purpouses
 		rand := strconv.Itoa(rand.Intn(105-95) + 95)
 		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: rand + ".00"}
 		time.Sleep(4 * time.Second)
@@ -41,8 +42,7 @@ func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
 }
 
 func main() {
-	//result := make(chan TickerPrice, 1)
-	sub := Subscriber{id: 0}
+	// Init buffers
 	var source [SOURCE_CAPACITY]Subscriber
 	var results [SOURCE_CAPACITY]chan TickerPrice
 
@@ -59,6 +59,7 @@ func main() {
 	}
 }
 
+// Calculating AVG price for our exchange 
 func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 	sum := 0.0
 	for i := 0; i < SOURCE_CAPACITY; i++ {
@@ -75,7 +76,7 @@ func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 				//fmt.Println("Channel closed!")
 			}
 		default:
-			fmt.Println("No value ready, moving on.")
+			//fmt.Println("No value ready, moving on.")
 		}
 
 	}
