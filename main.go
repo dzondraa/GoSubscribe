@@ -14,6 +14,9 @@ type Ticker string
 const (
 	BTCUSDTicker    Ticker = "BTC_USD"
 	SOURCE_CAPACITY        = 100
+	CALC_INTERVAL          = 60
+	PRICE_UPDATE_INTERVAL  = 5 
+
 )
 
 type TickerPrice struct {
@@ -54,7 +57,7 @@ func main() {
 
 	for {
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(CALC_INTERVAL * time.Second)
 		fmt.Println(calculatePrice(results))
 	}
 }
