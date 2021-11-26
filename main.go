@@ -30,23 +30,34 @@ type Subscriber struct {
 }
 
 func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
+	i := 0
+	price := "100.00"
 	for {
-		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: "25"}
+		if i%2 == 0 {
+			price = "100.00"
+		}
+		if i%3 == 0 {
+			price = "102.00"
+		}
+		if i%7 == 0 {
+			price = "98.00"
+		}
+
+		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: price}
 		time.Sleep(4 * time.Second)
-		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: "26"}
+		i++
 	}
-	//close(chn)
 }
 
 func main() {
-	//result := make(chan TickerPrice, 2)
+	//result := make(chan TickerPrice, 1)
 	sub := Subscriber{id: 0}
 	var source [SOURCE_CAPACITY]Subscriber
 	var results [SOURCE_CAPACITY]chan TickerPrice
 
 	for i := 0; i < SOURCE_CAPACITY; i++ {
 		source[i] = Subscriber{id: i}
-		results[i] = make(chan TickerPrice, 2)
+		results[i] = make(chan TickerPrice, 1)
 		go sub.SubscribePriceStream(results[i], results[i])
 	}
 
