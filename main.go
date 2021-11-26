@@ -12,11 +12,10 @@ import (
 type Ticker string
 
 const (
-	BTCUSDTicker    Ticker = "BTC_USD"
-	SOURCE_CAPACITY        = 100
-	CALC_INTERVAL          = 60
-	PRICE_UPDATE_INTERVAL  = 5 
-
+	BTCUSDTicker          Ticker = "BTC_USD"
+	SOURCE_CAPACITY              = 100
+	CALC_INTERVAL                = 60
+	PRICE_UPDATE_INTERVAL        = 5
 )
 
 type TickerPrice struct {
@@ -39,7 +38,7 @@ func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
 		// genereting random value at this point of time [95-105 USD] -> testing purpouses
 		rand := strconv.Itoa(rand.Intn(105-95) + 95)
 		result <- TickerPrice{Ticker: BTCUSDTicker, Time: time.Now(), Price: rand + ".00"}
-		time.Sleep(4 * time.Second)
+		time.Sleep(PRICE_UPDATE_INTERVAL * time.Second)
 		i++
 	}
 }
@@ -50,6 +49,7 @@ func main() {
 	var results [SOURCE_CAPACITY]chan TickerPrice
 
 	for i := 0; i < SOURCE_CAPACITY; i++ {
+		sub := Subscriber{id: i}
 		source[i] = Subscriber{id: i}
 		results[i] = make(chan TickerPrice, 1)
 		go sub.SubscribePriceStream(results[i], results[i])
@@ -62,7 +62,7 @@ func main() {
 	}
 }
 
-// Calculating AVG price for our exchange 
+// Calculating AVG price for our exchange
 func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 	sum := 0.0
 	for i := 0; i < SOURCE_CAPACITY; i++ {
