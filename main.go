@@ -43,25 +43,6 @@ func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
 	}
 }
 
-func main() {
-	// Init buffers
-	var source [SOURCE_CAPACITY]Subscriber
-	var results [SOURCE_CAPACITY]chan TickerPrice
-
-	for i := 0; i < SOURCE_CAPACITY; i++ {
-		sub := Subscriber{id: i}
-		source[i] = Subscriber{id: i}
-		results[i] = make(chan TickerPrice, 1)
-		go sub.SubscribePriceStream(results[i], results[i])
-	}
-
-	for {
-
-		time.Sleep(CALC_INTERVAL * time.Second)
-		fmt.Println(calculatePrice(results))
-	}
-}
-
 // Calculating AVG price for our exchange
 func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 	sum := 0.0
@@ -88,3 +69,24 @@ func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 func isTickerPriceRelevant(tickerPrice TickerPrice) bool {
 	return tickerPrice.Time.Truncate(1 * time.Hour).Equal(time.Now().Truncate(1 * time.Hour))
 }
+
+func main() {
+	// Init buffers
+	var source [SOURCE_CAPACITY]Subscriber
+	var results [SOURCE_CAPACITY]chan TickerPrice
+
+	for i := 0; i < SOURCE_CAPACITY; i++ {
+		sub := Subscriber{id: i}
+		source[i] = Subscriber{id: i}
+		results[i] = make(chan TickerPrice, 1)
+		go sub.SubscribePriceStream(results[i], results[i])
+	}
+
+	for {
+
+		time.Sleep(CALC_INTERVAL * time.Second)
+		fmt.Println(calculatePrice(results))
+	}
+}
+
+
