@@ -40,3 +40,11 @@ func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 
 }
 ```
+- Interface declaration changed to accept predeclared channels as input params
+```
+type PriceStreamSubscriber interface {
+	SubscribePriceStream(Ticker, chan TickerPrice)
+}
+
+
+```

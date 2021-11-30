@@ -83,7 +83,6 @@ func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 		}
 	}
 	return fmt.Sprintf(strconv.Itoa(int(time.Now().Unix()))+" %f", sum/float64(counter))
-
 }
 
 func isTickerPriceRelevant(tickerPrice TickerPrice) bool {
