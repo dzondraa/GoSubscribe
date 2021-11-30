@@ -12,10 +12,10 @@ import (
 type Ticker string
 
 const (
-	BTCUSDTicker          Ticker = "BTC_USD"
-	SOURCE_CAPACITY              = 100
-	CALC_INTERVAL                = 6
-	PRICE_UPDATE_INTERVAL        = 5
+	BTCUSDTicker Ticker = "BTC_USD"
+	SOURCE_CAPACITY = 100
+	CALC_INTERVAL = 6
+	PRICE_UPDATE_INTERVAL = 5
 )
 
 type TickerPrice struct {
