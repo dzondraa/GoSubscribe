@@ -14,7 +14,7 @@ type Ticker string
 const (
 	BTCUSDTicker Ticker = "BTC_USD"
 	SOURCE_CAPACITY = 100
-	CALC_INTERVAL = 60
+	CALC_INTERVAL = 6
 	PRICE_UPDATE_INTERVAL = 5
 )
 
@@ -43,7 +43,6 @@ func (s Subscriber) SubscribePriceStream(Ticker, result chan TickerPrice) {
 	}
 }
 
-
 func main() {
 	// Init buffers
 	var source [SOURCE_CAPACITY]Subscriber
@@ -66,24 +65,27 @@ func main() {
 // Calculating AVG price for our exchange
 func calculatePrice(res [SOURCE_CAPACITY]chan TickerPrice) string {
 	sum := 0.0
+	counter := 0
 	for i := 0; i < SOURCE_CAPACITY; i++ {
 		select {
-		case x, ok := <-res[i]:
-			if ok {
-				floatNum, err := strconv.ParseFloat(x.Price, 64)
-				if err != nil {
-					fmt.Println(err)
+		case ticker, ok := <-res[i]:
+			if ok && (isTickerPriceRelevant(ticker)) {
+				if ticker.Time.Truncate(24 * time.Hour).Equal(time.Now().Truncate(24 * time.Hour)) {
+					floatNum, err := strconv.ParseFloat(ticker.Price, 64)
+					if err != nil {
+						fmt.Println(err)
+					}
+					sum += floatNum
+					counter++
 				}
-				sum += floatNum
 
-			} else {
-				continue
 			}
-		default:
-			//fmt.Println("No value ready, moving on.")
 		}
-
 	}
-	return fmt.Sprintf(strconv.Itoa(int(time.Now().Unix()))+" %f", sum/SOURCE_CAPACITY)
+	return fmt.Sprintf(strconv.Itoa(int(time.Now().Unix()))+" %f", sum/float64(counter))
 
+}
+
+func isTickerPriceRelevant(tickerPrice TickerPrice) bool {
+	return tickerPrice.Time.Truncate(1 * time.Hour).Equal(time.Now().Truncate(1 * time.Hour))
 }
